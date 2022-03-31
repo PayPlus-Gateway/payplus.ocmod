@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <modification>
+        <name>PayPlus - Payment Gateway</name>
+        <version>1.0.0</version>
+        <code>payplus_extension_left_column</code>
+        <author>PayPlus LTD</author>
+        <link>https://www.payplus.co.il/opencart</link>
+        <file path="admin/controller/common/column_left.php">
+            <operation>
+                <search><![CDATA[ if ($system) { ]]></search>
+                <add position="before"><![CDATA[
+					$payplus = Array();
+					if ($this->user->hasPermission('modify','extension/payment/payplus') && $this->config->get('payment_payplus_status')) {
+						$this->load->language('extension/payment/payplus');
+						$data['menus'][] = array(
+							'id'       => 'menu-payplus',
+							'icon'	   => 'fa-plus',
+							'name'	   => $this->language->get('text_payplus_menu_column'),
+							'href'     => $this->url->link('extension/payment/payplus', 'user_token=' . $this->session->data['user_token'], true),
+							'children' => $payplus
+						);
+					}
+                ]]></add>
+            </operation>
+        </file>
+    </modification>
