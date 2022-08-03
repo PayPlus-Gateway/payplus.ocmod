@@ -142,7 +142,7 @@ class ControllerExtensionPaymentPayPlus extends Controller {
 		$ch = curl_init($url);
 		$headers = array('Content-Type: application/json','Authorization:{"api_key":"'.$this->config->get('payment_payplus_api_key').'","secret_key":"'.$this->config->get('payment_payplus_secret_key').'"}');
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_USERAGENT, 'OpenCart');
+        curl_setopt($ch, CURLOPT_USERAGENT, 'OpenCart '.$_SERVER['HTTP_USER_AGENT']);
 		curl_setopt($ch, CURLOPT_REFERER, $this->url->link('checkout/checkout', '', true));
 		curl_setopt($ch, CURLOPT_HEADER, 1);
 		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
