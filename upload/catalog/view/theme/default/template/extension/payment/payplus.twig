@@ -35,7 +35,7 @@
 </form>
 
 {% if display_mode == "iframe" %}
-	<iframe name="payplusiframe" id="payplusiframe" style="width: 100%; height: {{ iframe_height }}px; border: 0; display: none;"></iframe>
+	<iframe  allowpaymentrequest  name="payplusiframe" id="payplusiframe" style="width: 100%; height: {{ iframe_height }}px; border: 0; display: none;"></iframe>
 {% endif %}
 
 {% if display_mode != "iframe" and store_cards == 0 and is_logged == 0 %}
