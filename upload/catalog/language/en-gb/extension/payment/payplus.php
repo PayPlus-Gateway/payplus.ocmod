@@ -12,7 +12,8 @@ $_['text_title']         = 'Pay With Credit or Debit Card';
 $_['text_response']      = 'Response from PayPlus:';
 $_['button_confirm']     = 'Continue';
 $_['text_sandbox']	     = 'Warning: PayPlus - Payment Gateway is in \'Sandbox Mode\'. Your account will not be charged.';
-$_['text_total']	     = 'Shipping, Handling, Discounts & Taxes';
+$_['text_total']	     = 'Shipping, Handling,  & Taxes';
+$_['text_discount'] ='Discounts';
 $_['error_choose_card']	 = 'Please choose your card in order to charge';
 
 // Credit Cards

@@ -31,7 +31,39 @@ class ControllerExtensionPaymentPayPlus extends Controller {
 		
 		return $this->load->view('extension/payment/payplus', $data);
 		}
+    public  function getTotalAll(){
+        $taxes = $this->cart->getTaxes();
 
+
+        $total_data = array(
+            'totals' => &$totals,
+            'taxes'  => &$taxes,
+            'total'  => &$total
+        );
+        $this->load->model('setting/extension');
+
+        $sort_order = array();
+
+        $results = $this->model_setting_extension->getExtensions('total');
+
+
+        foreach ($results as $key => $value) {
+            $sort_order[$key] = $this->config->get('total_' . $value['code'] . '_sort_order');
+        }
+
+        array_multisort($sort_order, SORT_ASC, $results);
+
+        foreach ($results as $result) {
+            if ($this->config->get('total_' . $result['code'] . '_status')) {
+                $this->load->model('extension/total/' . $result['code']);
+
+                // We have to put the totals in an array so that they pass by reference.
+                $this->{'model_extension_total_' . $result['code']}->getTotal($total_data);
+            }
+        }
+
+        return $totals;
+    }
  	public function create_link($token=false) {
 	    $this->language->load('extension/payment/payplus');   
 		$this->load->model('checkout/order');
@@ -73,16 +105,27 @@ class ControllerExtensionPaymentPayPlus extends Controller {
 					"price" : '.$total.'
 					}';
 			$totalCartAmount += $total;
-		} else if ($total > 0) {
-			$productsItems[] = '{	
-					"name" : "'.$this->language->get('text_total').'",
-					"quantity" : 1,
-					"price" : -'.$total.'
-					}';
-			$totalCartAmount -= $total;
 		}
-		
-		
+        if(!empty($this->session->data['coupon'])){
+
+            $total =$this->getTotalAll();
+            $coupons =array_filter($total,function ($value){
+                return $value['code']==="coupon";
+            });
+
+            if($coupons){
+
+                foreach ($coupons as $key =>$coupon){
+                    $productsItems[] = '{
+					"name" : "'.$this->language->get('text_discount').'",
+					"quantity" : 1,
+					"price" : '.$coupon['value'].'
+					}';
+                    $totalCartAmount +=$coupon['value'];
+                }
+
+            }
+        }
 	$langCode = explode("-",$this->session->data['language']);
 	
 	$payload = '{
@@ -188,8 +231,11 @@ class ControllerExtensionPaymentPayPlus extends Controller {
 	public function callback(){
 		$this->load->model('checkout/order');
 
-		if ($this->request->get) $request = $this->request->get;
-			else $request = $this->request->post;
+        if (isset($this->request->get['more_info'])){
+            $request = $this->request->get;
+        }else{
+            $request = $this->request->post;
+        }
 
 		$order_id = $request['more_info'];
 		if (!$order_id OR !$request) {
@@ -257,5 +303,3 @@ class ControllerExtensionPaymentPayPlus extends Controller {
 		$this->response->redirect($this->url->link('checkout/checkout', '', true));
 		}
 	}
-
-?>
